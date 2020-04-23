@@ -48,3 +48,7 @@ for (i in 1:length(sites)) {
 }
 
 usethis::use_data(sensors_all,overwrite = TRUE)
+
+sensors_unique <- unique(stringr::str_replace_all(unique(sensors_all$name)," \\(.*\\)",""))
+
+usethis::use_data(sensors_unique, overwrite = TRUE)
