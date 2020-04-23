@@ -29,9 +29,12 @@ param_names <- c("time",
                  "temperature",
                  "practical_salinity")
 
+
 df <- filter(df_sites,str_detect(name,sensor_type) & min_depth > depth[1] & max_depth < depth[2])
 params <- get_sensor_meta(df$site[1], df$node[1], df$sensor[1], api_user, api_token)
 inst_id <- unique(as.numeric(stringr::str_extract(filter(params, particleKey %in% param_names)$pdId, "[0-9].*")))
+
+# CHECK IF: all inst_ids exist in all files. Can we need to make inst_ids for each line?
 
 # # NOTE!!! field dependent change --------------------------------------------------
 #
@@ -67,21 +70,11 @@ inst_id <- unique(as.numeric(stringr::str_extract(filter(params, particleKey %in
 
 # set the method (recovered_host? telemetered?)
 method <- "recovered_host"
+df <- mutate(df, method = method)
 
 # Get the streams at each site, node, and sensor to make the request to the API
 # Loop through each row of df to find the streams for each and put these into a new data frame
-for (i in 1:nrow(df)) {
-  df2<- filter(df, 1:nrow(df) %in% i)
-  streams <- get_streams(df2$site, df2$node, df2$sensor, method, api_user, api_token)
-  for (j in 1:length(streams)) {
-    dfadd <- mutate(df2, method = method, stream = streams[j])
-    if (i == 1 & j == 1) {
-      dfout <- dfadd
-    } else {
-      dfout <- bind_rows(dfout,dfadd)
-    }
-  }
-}
+dfout <- get_streams_all(df,api_user, api_token)
 
 # Set up a parameter enquirely (this will only request certain parameters)
 query <- paste0("parameters=",paste0(inst_id,collapse = ","))
