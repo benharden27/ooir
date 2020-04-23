@@ -4,7 +4,10 @@
 \alias{get_filenames}
 \title{Gets (probable) list of nc files for download}
 \usage{
-get_filenames(data_request, base_url = "")
+get_filenames(
+  data_request,
+  base_url = "https://opendap.oceanobservatories.org/thredds/dodsC/"
+)
 }
 \arguments{
 \item{base_url}{}

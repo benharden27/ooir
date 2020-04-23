@@ -171,5 +171,19 @@ get_sensor_info <- function(site, node, sensor, api_user, api_token,
 
 }
 
+#' Get depth range of sensor
+#'
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_sensor_depth <- function(...) {
+  info <- get_sensor_info(...)
+  depth <- as.numeric(c(info["mindepth"], info["maxdepth"]))
+  return(depth)
+}
+
 
 
