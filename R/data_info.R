@@ -82,6 +82,33 @@ get_streams <- function(site, node, sensor, method, api_user, api_token, base_ur
   get_api(url, api_user, api_token)
 }
 
+#' Get all streams from a data frame of sensor info
+#'
+#' @param site_df
+#' @param api_user
+#' @param api_token
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_streams_all <- function(site_df, api_user, api_token) {
+  # loop through all the rows of the data frame and request the streams for that row
+  for (i in 1:nrow(df)) {
+    df2<- filter(df, 1:nrow(df) %in% i)
+    streams <- get_streams(df2$site, df2$node, df2$sensor, method, api_user, api_token)
+    for (j in 1:length(streams)) {
+      dfadd <- mutate(df2, stream = streams[j])
+      if (i == 1 & j == 1) {
+        dfout <- dfadd
+      } else {
+        dfout <- bind_rows(dfout,dfadd)
+      }
+    }
+  }
+  return(dfout)
+}
+
 #' Get sensor metadata
 #'
 #' @param site
@@ -184,6 +211,5 @@ get_sensor_depth <- function(...) {
   depth <- as.numeric(c(info["mindepth"], info["maxdepth"]))
   return(depth)
 }
-
 
 
